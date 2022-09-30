@@ -31,6 +31,8 @@
 #include "esp_gateway_wifi.h"
 #include "esp_gateway_internal.h"
 
+#include "wifi_standalone.h"
+
 #if defined(CONFIG_GATEWAY_EXTERNAL_NETIF_STATION) || defined(CONFIG_GATEWAY_DATA_FORWARDING_NETIF_SOFTAP)
 
 #define GATEWAY_EVENT_STA_CONNECTED  BIT0
@@ -200,12 +202,27 @@ esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint
     /* Get WiFi Station configuration */
     esp_wifi_get_config(WIFI_IF_STA, (wifi_config_t*)&router_config);
 
+    char *password = NULL;
+    char *ssid = NULL;
+    wifi_standalone_get_ssid(&ssid);
+    wifi_standalone_get_password(&password);
+    
+    if(password == NULL || ssid == NULL) {
+        ESP_LOGE(TAG, "password or ssid is null");
+        return wifi_netif;
+    }
+    
+    strncpy((char*)router_config.ssid, ssid, MAX_WIFI_SSID_LENGTH);
+    strncpy((char*)router_config.password, password, MAX_WIFI_PASSWORD_LENGTH);
+
     /* Get Wi-Fi Station ssid success */
     if (strlen((const char*)router_config.ssid)) {
         ESP_LOGI(TAG, "Found ssid %s",     (const char*) router_config.ssid);
         ESP_LOGI(TAG, "Found password %s", (const char*) router_config.password);
         esp_wifi_connect();
     }
+
+
 #endif /* CONFIG_LITEMESH_ENABLE */
 
     /* Register our event handler for Wi-Fi, IP and Provisioning related events */

@@ -34,7 +34,7 @@ if (CONFIG_GATEWAY_DATA_FORWARDING_NETIF_SPI)
     list(APPEND priv_srcs "priv_src/gateway_spi.c")
 endif()
 
-list(APPEND requires "esp-litemesh" "network_adapter" "esp_modem" "tinyusb" "led" "json" "esp_eth")
+list(APPEND requires "esp-litemesh" "network_adapter" "esp_modem" "tinyusb" "led" "json" "esp_eth" "wifi_standalone")
 
 idf_component_register(SRCS "${srcs}" "${priv_srcs}"
                        INCLUDE_DIRS "${include_dirs}"
