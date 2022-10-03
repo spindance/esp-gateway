@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "esp_netif_types.h"
 #ifdef CONFIG_LITEMESH_ENABLE
 #include "esp_litemesh.h"
 #endif
