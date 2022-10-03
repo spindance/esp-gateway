@@ -31,7 +31,7 @@
 #include "esp_gateway_wifi.h"
 #include "esp_gateway_internal.h"
 
-#include "wifi_standalone.h"
+#include <wifi_standalone.h>
 
 #if defined(CONFIG_GATEWAY_EXTERNAL_NETIF_STATION) || defined(CONFIG_GATEWAY_DATA_FORWARDING_NETIF_SOFTAP)
 
@@ -180,7 +180,9 @@ static void esp_litemesh_event_ip_changed_handler(void *arg, esp_event_base_t ev
 }
 #endif
 
-esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint8_t mac[6], bool data_forwarding, bool enable_dhcps)
+esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint8_t mac[6],
+                                                 bool data_forwarding, bool enable_dhcps,
+                                                 const wifi_standalone_configuration_t *config)
 {
     esp_netif_t *wifi_netif = NULL;
     wifi_mode_t mode = WIFI_MODE_NULL;
@@ -201,19 +203,9 @@ esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint
     wifi_sta_config_t router_config;
     /* Get WiFi Station configuration */
     esp_wifi_get_config(WIFI_IF_STA, (wifi_config_t*)&router_config);
-
-    char *password = NULL;
-    char *ssid = NULL;
-    wifi_standalone_get_ssid(&ssid);
-    wifi_standalone_get_password(&password);
     
-    if(password == NULL || ssid == NULL) {
-        ESP_LOGE(TAG, "password or ssid is null");
-        return wifi_netif;
-    }
-    
-    strncpy((char*)router_config.ssid, ssid, MAX_WIFI_SSID_LENGTH);
-    strncpy((char*)router_config.password, password, MAX_WIFI_PASSWORD_LENGTH);
+    strncpy((char*)router_config.ssid, config->ssid, MAX_WIFI_SSID_LENGTH);
+    strncpy((char*)router_config.password, config->password, MAX_WIFI_PASSWORD_LENGTH);
 
     /* Get Wi-Fi Station ssid success */
     if (strlen((const char*)router_config.ssid)) {

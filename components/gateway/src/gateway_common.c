@@ -38,6 +38,10 @@
 #include "esp_litemesh.h"
 #endif
 
+#include <wifi_standalone.h>
+
+
+
 // DHCP_Server has to be enabled for this netif
 #define DHCPS_NETIF_ID(netif) (ESP_NETIF_DHCP_SERVER & esp_netif_get_flags(netif))
 
@@ -281,7 +285,7 @@ esp_netif_t* esp_gateway_create_netif(esp_netif_config_t* config, esp_netif_ip_i
     return netif;
 }
 
-void esp_gateway_create_all_netif(void)
+void esp_gateway_create_all_netif(const wifi_standalone_configuration_t *config)
 {
 #if defined(CONFIG_GATEWAY_DATA_FORWARDING_NETIF_SOFTAP)
     esp_gateway_create_softap_netif(NULL, NULL, true, true);
@@ -310,7 +314,7 @@ void esp_gateway_create_all_netif(void)
 #endif
 
 #if defined(CONFIG_GATEWAY_EXTERNAL_NETIF_STATION)
-    esp_gateway_create_station_netif(NULL, NULL, false, false);
+    esp_gateway_create_station_netif(NULL, NULL, false, false, config);
 #endif
 
 #if CONFIG_LITEMESH_ENABLE

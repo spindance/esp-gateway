@@ -18,6 +18,8 @@
 #include "esp_litemesh.h"
 #endif
 
+#include <wifi_standalone.h>
+
 #if defined(CONFIG_GATEWAY_EXTERNAL_NETIF_MODEM)
 /**
 * @brief Create modem netif for gateway.
@@ -47,7 +49,7 @@ esp_netif_t* esp_gateway_create_modem_netif(esp_netif_ip_info_t* ip_info, uint8_
 *      - instance: the netif instance created successfully
 *      - NULL: failed because some error occurred
 */
-esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint8_t mac[6], bool data_forwarding, bool enable_dhcps);
+esp_netif_t* esp_gateway_create_station_netif(esp_netif_ip_info_t* ip_info, uint8_t mac[6], bool data_forwarding, bool enable_dhcps, const wifi_standalone_configuration_t *config);
 #endif
 
 #if defined(CONFIG_GATEWAY_EXTERNAL_NETIF_ETHERNET) || defined(CONFIG_GATEWAY_DATA_FORWARDING_NETIF_ETHERNET)
@@ -134,4 +136,4 @@ esp_netif_t* esp_gateway_create_spi_netif(esp_netif_ip_info_t* ip_info, uint8_t 
 * @brief Create all netif which are enabled in menuconfig, for example, station, modem, ethernet.
 *
 */
-void esp_gateway_create_all_netif(void);
+void esp_gateway_create_all_netif(const wifi_standalone_configuration_t *config);
